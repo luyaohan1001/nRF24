@@ -1,0 +1,3 @@
+[submodule "nRF24"]
+	path = nRF24
+	url = git@github.com:luyaohan1001/nRF24.git
