@@ -1,5 +1,24 @@
-#include "ble.h"
+/**
+  ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ********
+  * @file      :     network.c
+  * @author    :     Luyao Han
+  * @email     :     luyaohan1001@gmail.com
+  * @brief     :     Network layer (OSI) library for Nordic nRF24L01+ 2.4GHz wireless module.
+  * @date      :     04-30-2022
+  * @note      :     This library implements a custum protocol layer for nRF24L01+, 
+  *                    instead of Enhanced ShockBurst Packet format in nRF24L01+ Product Specification v1.0, Section 7.3.
+  *                  The reason is that I do not wish to be constrained by the packet format defined by Nordic. 
+  *                  Instead, I will take reference from its structure and Bluetooth's packet structure.
+  *                  It is hoped that this protocal can be migrated to other radio projects such as LoRa or Zigbee with low bandwidth.
+  * Copyright (C) 2022-2122 Luyao Han. The following code may be shared or modified for personal use / non-commercial use only.
+  ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ********  */
 
+/* Includes ---------------------------------------------------------------------------------------------------------------------------------------*/
+#include "nRF24.h"
+#include "network.h"
+
+/* Macro Define -----------------------------------------------------------------------------------------------------------------------------------*/
+#define NRF24_DEBUG /* When defined, debug messages are logged through serial_print(). */
 
 
 
@@ -274,9 +293,12 @@ void ble_begin( ble_struct *ble,char* _name )
   // PWR_UP, state transition to [Standby-I]
   writing_byte = 0x06;
   nRF24_verified_write_register(W_REGISTER_MASK + CONFIG, 1, &writing_byte);
-  spi_delay(150);
-  
+  // spi_delay(150);
+    bcm2835_delay(1);
+
 	nRF24_CE_1();
 }
+
+
 
 

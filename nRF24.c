@@ -19,7 +19,7 @@
 #include "nRF24.h"
 
 /* Macro Define -----------------------------------------------------------------------------------------------------------------------------------*/
-#define NRF24_DEBUG /* When defined, debug messages are logged through UART. */
+#define NRF24_DEBUG /* When defined, debug messages are logged through serial_print(). */
 #define BCM2835
 
 /* GPIO Physical Layer ----------------------------------------------------------------------------------------------------------------------------*/
@@ -735,7 +735,7 @@ void nRF24_config_enhanced_shockburst_tx_mode()
 /**
   * @brief  Configure nRF24L01+ in RX mode without Enhanced ShockBurst.
   *           Without Enhanced ShockBurst, Auto Acknowledgement and Auto-Retransmission is masked off.
-	*           Make sure to setup a TX nRF24 first and keep transmitting so we can test if RX nRF24 is working.
+  *           Make sure to setup a TX nRF24 first and keep transmitting so we can test if RX nRF24 is working.
   *         (!) Auto Acknowledgement must also be masked off on the TX nRF24 in order for RX to receive data.
   *           If TX and RX nRF24 module has different setting in parameters (expect for PRIM_RX), 
   *           The TX nRF24 may be successfully sending data, but RX nRF24 receives none.

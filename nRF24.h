@@ -304,8 +304,9 @@ void nRF24_tx_self_test();
 void nRF24_send_packet(uint8_t tx_payload_width, uint8_t* payload);
 
 void nRF24_config_normal_tx_mode();
-void nRF24_config_enhanced_shockburst_tx_mode();
 
+/* Configure TX mode with Enhanced ShockBurst (Auto-Acknowledgement + Re-transmission Enabled) */
+void nRF24_config_enhanced_shockburst_tx_mode();
 
 void nRF24_config_normal_rx_mode();
 void nRF24_receive_packet();
