@@ -9,27 +9,27 @@
 	*                  On the fresh import of this library. How do I get nRF24L01+ working?
 	*                    1. Setup debugger such as OpenOCD. So you can single step debug.
 	*                    2. Setup UART serial connection. Make sure "Hello World\n" printing is possible.
-	*                    3. TODO: Modify the platform dependent functions labeled in nRF24.h (< 2 mins.) 
+	*                    3. TODO: Modify the platform dependent functions labeled in nrf24.h (< 2 mins.) 
 	*                    3. Without a RX nRF24, setup a TX nRF24 and run nRF24_tx_self_test();
 	*                    4. Finally if we get TX nRF24 working, work on a RX nRF24 module.
   * Copyright (C) 2022-2122 Luyao Han. The following code may be shared or modified for personal use / non-commercial use only.
   ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ********  */
 
 /* Includes ---------------------------------------------------------------------------------------------------------------------------------------*/
-#include "nRF24.h"
+#include "nrf24.h"
 
 /* Macro Define -----------------------------------------------------------------------------------------------------------------------------------*/
 #define NRF24_DEBUG /* When defined, debug messages are logged through serial_print(). */
-#define BCM2835
+#define STM32F4xx
 
 /* GPIO Physical Layer ----------------------------------------------------------------------------------------------------------------------------*/
 
 /* GPIO Defined on STM32F401 */
-/* SCK    PA8  */
-/* MOSI   PB10 */
-/* CSN    PB4  */
-/* CE     PB5  */
-/* MISO   PA10 */
+/* CE     PC11  */
+/* SCK    PD2  */
+/* MOSI   PC10 */
+/* CSN    PC12  */
+/* MISO   PC2 */
 
 /* GPIO Defined on Raspberry Pi 4B - BCM2835 */
 /*        Board    BCM      */
@@ -44,11 +44,13 @@
   */
 __inline__ void nRF24_gpio_initialize()
 {
+  #if defined BCM2835
   bcm2835_gpio_fsel(RPI_BPLUS_GPIO_J8_29, BCM2835_GPIO_FSEL_OUTP); /* CE   */
   bcm2835_gpio_fsel(RPI_BPLUS_GPIO_J8_31, BCM2835_GPIO_FSEL_OUTP); /* SCK  */
   bcm2835_gpio_fsel(RPI_BPLUS_GPIO_J8_33, BCM2835_GPIO_FSEL_OUTP); /* MOSI */
   bcm2835_gpio_fsel(RPI_BPLUS_GPIO_J8_35, BCM2835_GPIO_FSEL_OUTP); /* CSN  */
   bcm2835_gpio_fsel(RPI_BPLUS_GPIO_J8_37, BCM2835_GPIO_FSEL_INPT); /* MISO */
+	#endif 
 }
 
 /**
@@ -61,7 +63,7 @@ __inline__ void nRF24_gpio_initialize()
 __inline__ void SPI_SCK_1()
 {
     #if defined STM32F4xx
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);  
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);  
     #elif defined BCM2835
     bcm2835_gpio_write(RPI_BPLUS_GPIO_J8_31, HIGH);
     #endif
@@ -77,7 +79,7 @@ __inline__ void SPI_SCK_1()
 __inline__ void SPI_SCK_0()
 {
     #if defined STM32F4xx
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);  
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);  
     #elif defined BCM2835
     bcm2835_gpio_write(RPI_BPLUS_GPIO_J8_31, LOW);
     #endif
@@ -93,7 +95,7 @@ __inline__ void SPI_SCK_0()
 __inline__ void SPI_MOSI_1()
 {
     #if defined STM32F4xx
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);  
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);  
     #elif defined BCM2835
     bcm2835_gpio_write(RPI_BPLUS_GPIO_J8_33, HIGH);
     #endif
@@ -109,7 +111,7 @@ __inline__ void SPI_MOSI_1()
 __inline__ void SPI_MOSI_0()
 {
     #if defined STM32F4xx
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);  
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);  
     #elif defined BCM2835
     bcm2835_gpio_write(RPI_BPLUS_GPIO_J8_33, LOW);
     #endif
@@ -126,7 +128,7 @@ __inline__ void SPI_CS_1()
 {
     /* CS High == CSN Low */
     #if defined STM32F4xx
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);  
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);  
     #elif defined BCM2835
     bcm2835_gpio_write(RPI_BPLUS_GPIO_J8_35, LOW);
  
@@ -144,7 +146,7 @@ __inline__ void SPI_CS_0()
 {
     /* CS Low == CSN High */
     #if defined STM32F4xx
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);
     #elif defined BCM2835
     bcm2835_gpio_write(RPI_BPLUS_GPIO_J8_35, HIGH);
     #endif
@@ -159,7 +161,7 @@ __inline__ void SPI_CS_0()
 __inline__ bool SPI_READ_MISO()
 {
   #if defined STM32F4xx
-  return (bool) HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10);
+  return (bool) HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2);
   #elif defined BCM2835
   return (bcm2835_gpio_lev(RPI_BPLUS_GPIO_J8_37)) & 0x01; 
   #endif

@@ -1,6 +1,6 @@
 /**
   ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ******** ********
-  * @file      :     nRF24.h
+  * @file      :     nrf24.h
   * @author    :     Luyao Han
   * @email     :     luyaohan1001@gmail.com
   * @brief     :     C library for Nordic nRF24L01+ (or nRF24L01p) 2.4GHz wireless transceiver.
@@ -12,7 +12,7 @@
 #ifndef __NRF24_H
 #define __NRF24_H
 
-#define BCM2835
+#define STM32F4xx
 
 /* Includes --------------------------------------------------------------------------------------------------------------------*/
 #if defined STM32F4xx
